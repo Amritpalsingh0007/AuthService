@@ -16,5 +16,4 @@ public class UserRole {
     @Column(name="role_id")
     private Long roleId;
     private String name;
-
 }

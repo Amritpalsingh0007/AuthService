@@ -6,8 +6,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import org.example.service.JwtService;
-import org.example.service.UserDetailsServiceImpl;
+import org.example.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -18,6 +19,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
 
+@EqualsAndHashCode(callSuper = false)
 @Component
 @AllArgsConstructor
 @Data
@@ -25,7 +27,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     @Autowired
     private final JwtService jwtService;
     @Autowired
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
@@ -37,7 +39,7 @@ public class JwtAuthFilter extends OncePerRequestFilter {
             username = jwtService.extractUsername(token);
         }
         if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
-            UserDetails userDetails = userDetailsServiceImpl.loadUserByUsername(username);
+            UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
             if(jwtService.validateToken(token, userDetails)){
                 UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(userDetails, null);
                 authenticationToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));

@@ -6,13 +6,16 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Getter
 @Setter
 @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
+@AllArgsConstructor
+@NoArgsConstructor
+@Builder
 public class UserInfoDto {
+    private String userId;
     @NotEmpty(message = "Username is required")
     @Size(min=3, message="Username must be of length 3 to 20 character long",max=20)
     @Pattern(regexp = "^[a-zA-Z0-9]{3,20}$", message = "Username should only consists of letters and digits")

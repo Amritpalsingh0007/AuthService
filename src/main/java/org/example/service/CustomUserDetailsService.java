@@ -3,11 +3,11 @@ package org.example.service;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import org.example.entities.UserInfo;
+import org.example.eventProducer.UserInfoProducer;
 import org.example.model.UserInfoDto;
 import org.example.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
@@ -19,12 +19,15 @@ import java.util.UUID;
 @Component
 @AllArgsConstructor
 @Data
-public class UserDetailsServiceImpl implements UserDetailsService {
+public class CustomUserDetailsService implements org.springframework.security.core.userdetails.UserDetailsService {
     @Autowired
     private final UserRepository userRepository;
 
     @Autowired
     private final PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private final UserInfoProducer userInfoProducer;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -46,6 +49,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
         }
         String userId = UUID.randomUUID().toString();
         userRepository.save(new UserInfo(userId, userInfoDto.getUsername(), userInfoDto.getPassword(), new HashSet<>()));
+        userInfoDto.setUserId(userId);
+        userInfoProducer.sendEventToKafka(userInfoDto);
         return true;
     }
 }

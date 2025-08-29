@@ -35,6 +35,11 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-impl:0.12.6")
     implementation("io.jsonwebtoken:jjwt-jackson:0.12.6")
 
+    // kafka
+    implementation ("org.springframework.boot:spring-boot-starter")
+    implementation ("org.springframework.boot:spring-boot-starter-kafka")
+    implementation("org.springframework.kafka:spring-kafka:4.0.0-M4")
+
     // Spring boot Starter validations https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-validation
     implementation("org.springframework.boot:spring-boot-starter-validation:4.0.0-M1")
 

@@ -7,7 +7,7 @@ import org.example.model.UserInfoDto;
 import org.example.response.JwtResponseDTO;
 import org.example.service.JwtService;
 import org.example.service.RefreshTokenService;
-import org.example.service.UserDetailsServiceImpl;
+import org.example.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,12 +25,12 @@ public class AuthController {
     private RefreshTokenService refreshTokenService;
 
     @Autowired
-    private UserDetailsServiceImpl userDetailsService;
+    private CustomUserDetailsService customUserDetailsService;
 
     @PostMapping("auth/v1/signup")
     public ResponseEntity<Object> SignUp(@Valid @RequestBody UserInfoDto userInfoDto){
         try{
-            Boolean isSignUped = userDetailsService.signupUser(userInfoDto);
+            Boolean isSignUped = customUserDetailsService.signupUser(userInfoDto);
             if(Boolean.FALSE.equals(isSignUped)){
                 return new ResponseEntity<>("Already Exist", HttpStatus.BAD_REQUEST);
             }

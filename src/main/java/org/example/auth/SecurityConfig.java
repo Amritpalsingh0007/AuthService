@@ -1,8 +1,9 @@
 package org.example.auth;
 
 import lombok.Data;
+import org.example.eventProducer.UserInfoProducer;
 import org.example.repository.UserRepository;
-import org.example.service.UserDetailsServiceImpl;
+import org.example.service.CustomUserDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,7 +17,6 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.annotation.web.configurers.CorsConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
-import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -29,11 +29,11 @@ public class SecurityConfig {
     private final PasswordEncoder passwordEncoder;
 
     @Autowired
-    private final UserDetailsServiceImpl userDetailsServiceImpl;
+    private final CustomUserDetailsService customUserDetailsService;
 
     @Bean
-    public UserDetailsService userDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder){
-        return new UserDetailsServiceImpl(userRepository, passwordEncoder);
+    public org.springframework.security.core.userdetails.UserDetailsService userDetailsService(UserRepository userRepository, PasswordEncoder passwordEncoder, UserInfoProducer userInfoProducer){
+        return new CustomUserDetailsService(userRepository, passwordEncoder, userInfoProducer);
     }
 
     @Bean
@@ -51,7 +51,7 @@ public class SecurityConfig {
 
     @Bean
     public AuthenticationProvider authenticationProvider(){
-        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(userDetailsServiceImpl);
+        DaoAuthenticationProvider authenticationProvider = new DaoAuthenticationProvider(customUserDetailsService);
         authenticationProvider.setPasswordEncoder(passwordEncoder);
         return authenticationProvider;
     }
