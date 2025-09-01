@@ -11,19 +11,18 @@ import org.springframework.kafka.core.KafkaTemplate;
 
 @Service
 public class UserInfoProducer {
-    private final KafkaTemplate<String, UserInfoDto> kafkaTemplate;
+    private final KafkaTemplate<String, UserInfoEvent> kafkaTemplate;
 
     @Value("${spring.kafka.topic.name}")
     private String TOPIC_NAME;
 
     @Autowired
-    UserInfoProducer(KafkaTemplate<String, UserInfoDto> kafkaTemplate){
+    UserInfoProducer(KafkaTemplate<String, UserInfoEvent> kafkaTemplate){
         this.kafkaTemplate = kafkaTemplate;
     }
 
-    public void sendEventToKafka(UserInfoDto userInfoDto){
-        Message<UserInfoDto> message = MessageBuilder.withPayload(userInfoDto).setHeader(KafkaHeaders.TOPIC, TOPIC_NAME).build();
+    public void sendEventToKafka(UserInfoEvent userInfoEvent){
+        Message<UserInfoEvent> message = MessageBuilder.withPayload(userInfoEvent).setHeader(KafkaHeaders.TOPIC, TOPIC_NAME).build();
         kafkaTemplate.send(message);
-        System.out.println("Message sent to Kafka topic: " + TOPIC_NAME);
     }
 }

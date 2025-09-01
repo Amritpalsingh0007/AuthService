@@ -50,7 +50,7 @@ public class CustomUserDetailsService implements org.springframework.security.co
         String userId = UUID.randomUUID().toString();
         userRepository.save(new UserInfo(userId, userInfoDto.getUsername(), userInfoDto.getPassword(), new HashSet<>()));
         userInfoDto.setUserId(userId);
-        userInfoProducer.sendEventToKafka(userInfoDto);
+        userInfoProducer.sendEventToKafka(userInfoDto.convertToUserInfoEvent());
         return true;
     }
 }
